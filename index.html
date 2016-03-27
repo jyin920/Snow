@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>My Season's Greeting Card</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+		<script type="text/javascript">
+			var canvas;
+			var ctx;
+			var interval;
+			
+			var x = [];
+			var y = [];		
+			var size = [];
+			var speed = [];
+			var snow = [];
+			
+			var message ="";
+		
+			function init() {
+				canvas = document.getElementById("myCavas");
+				for (var i = 0; i < 25; i++){
+					initImg(i);
+				}
+				if (canvas.getContext){		
+					ctx = canvas.getContext('2d');
+					draw(ctx);				
+				} else {
+					alert("Sorry, your browser does not support this eCard.");
+				}
+			}
+			
+			function initImg(i){
+				x[i] = Math.random()*600-50;
+				y[i] = Math.random()*200-400;		
+				size[i] = Math.random()*50+20;
+				speed[i] = Math.random()*1.5+0.5;
+				snow[i] = Math.floor(Math.random()*4);
+			}
+
+			
+			function draw(ctx){
+				var background = new Image();
+				background.src = "background.png";
+				ctx.drawImage(background,0,0);
+				for (var i = 0; i < 25; i++){
+					var img = new Image();
+					var imglink=["snow1.png","snow2.png","snow3.png","snow4.png"];
+					img.src = imglink[snow[i]]; 
+					y[i]=y[i]+speed[i];
+					if (y[i]>400) {				
+						initImg(i);
+					}
+					ctx.drawImage(img, x[i], y[i],size[i],size[i]);
+				}
+				ctx.shadowColor = "rgba(255,253,119,1)";
+				ctx.shadowOffsetX = 1;
+				ctx.shadowOffsetY = 1;
+				ctx.shadowBlur = 10;
+				ctx.font = "40px Impact";
+				ctx.fillStyle = "rgba(0,0,0,1)";
+				ctx.fillText(message, 60, 150);	
+			}
+			
+			function move(){
+				interval = setInterval(function(){draw(ctx)},10);
+			}
+			
+			function stop(){
+				clearInterval(interval);
+			}
+			
+			function addMsg(){
+				message = document.getElementById("msg").value;
+				draw(ctx);					
+			}
+			
+			$(document).ready(function(){
+				init();
+			});
+			
+		</script>
+	</head>
+    <body>
+		<div id="header"><h1>My Season's Greeting Card</h1></div>
+        <div id = "canvas">
+			<canvas id="myCavas" width="600" height="400" onload="init()" onmouseover="move()" onmouseout="stop()">
+				Sorry, your browser does not support this eCard.
+			</canvas>
+		</div>
+		<div id="msgBox">
+			You can enter your own greeting message here: <input id="msg" type="text">
+			<button onclick="addMsg()">Add</button>
+		</div>
+    </body>
+</html>
